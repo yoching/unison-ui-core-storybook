@@ -1,8 +1,8 @@
-module Stories.Icon.UnisonMark exposing (main)
+module Stories.UI.Card exposing (..)
 
 import Html exposing (Html)
 import Storybook.Story exposing (Story)
-import UI.Icon
+import UI.Card
 
 
 main : Story () msg
@@ -14,4 +14,6 @@ main =
 
 view : Html msg
 view =
-    UI.Icon.view UI.Icon.unisonMark
+    Html.div []
+        [ UI.Card.view <| UI.Card.card [ Html.text "Text" ]
+        ]
