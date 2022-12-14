@@ -6,7 +6,8 @@
   "scripts": {
     "start": "npm install && npm run dev",
     "dev": "start-storybook -p 6006",
-    "build": "build-storybook -o .storybook/dist"
+    "build": "build-storybook -o .storybook/dist",
+    "elm-git": "elm-git-install"
   },
   "devDependencies": {
     "@babel/core": "7.18.10",
@@ -17,6 +18,7 @@
     "@storybook/html": "6.5.10",
     "chokidar": "3.5.3",
     "elm": "0.19.1-5",
+    "elm-git-install": "^0.1.4",
     "node-elm-compiler": "5.0.6",
     "vite": "3.0.8"
   },
