@@ -1,4 +1,5 @@
 import '../static/style.css'
+import '../elm-stuff/gitdeps/github.com/unisonweb/ui-core/src/css/ui.css'
 
 export const parameters = {
     actions: { argTypesRegex: "^on[A-Z].*" },
