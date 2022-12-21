@@ -2,7 +2,9 @@ module Stories.UI.Button exposing (..)
 
 import Html exposing (Html)
 import Storybook.Story exposing (Story)
-import UI.Button
+import Helper exposing (col)
+import UI.Button as B
+import UI.Icon as I
 
 
 main : Story () Msg
@@ -14,24 +16,16 @@ main =
 type Msg
     = UserClicked
 
+buttons: List (B.Button Msg)
+buttons = [
+    B.button UserClicked "Button" ,
+    B.icon UserClicked I.unisonMark,
+    B.iconThenLabel UserClicked I.unisonMark "Icon then Label",
+    B.labelThenIcon UserClicked "Label then Icon" I.unisonMark,
+    B.iconThenLabelThenIcon UserClicked I.unisonMark "Icon then Label then Icon" I.unisonMark
+    ]
+
 view : Html Msg
 view =
-    Html.div [] [
-        UI.Button.github "Some text"
-            |> UI.Button.view,
-        UI.Button.button UserClicked "Some button" 
-            |> UI.Button.active
-            |> UI.Button.view,
-        UI.Button.button UserClicked "Some button" 
-            |> UI.Button.decorativeBlue
-            |> UI.Button.large
-            |> UI.Button.view,
-        UI.Button.button UserClicked "Some button" 
-            |> UI.Button.decorativeBlue
-            |> UI.Button.medium
-            |> UI.Button.view,
-        UI.Button.button UserClicked "Some button" 
-            |> UI.Button.critical
-            |> UI.Button.small
-            |> UI.Button.view
-    ]
+    (buttons |> List.map (B.view))
+    |> col []
