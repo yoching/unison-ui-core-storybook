@@ -15,8 +15,8 @@ main =
 type Msg
     = UserClicked
 
-icons: List (I.Icon msg)
-icons = [
+elements: List (I.Icon msg)
+elements = [
     I.unisonMark,
     I.patch,
     I.dataConstructor,
@@ -98,5 +98,5 @@ icons = [
 
 view : Html Msg
 view =
-    (icons |> List.map (I.view))
+    (elements |> List.map (I.view))
     |> col []

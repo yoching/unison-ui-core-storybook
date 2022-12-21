@@ -16,8 +16,8 @@ main =
 type Msg
     = UserClicked
 
-buttons: List (B.Button Msg)
-buttons = [
+elements: List (B.Button Msg)
+elements = [
     B.button UserClicked "Button" ,
     B.icon UserClicked I.unisonMark,
     B.iconThenLabel UserClicked I.unisonMark "Icon then Label",
@@ -27,5 +27,5 @@ buttons = [
 
 view : Html Msg
 view =
-    (buttons |> List.map (B.view))
+    (elements |> List.map (B.view))
     |> col []
