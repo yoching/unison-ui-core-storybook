@@ -31,31 +31,65 @@ type Msg
 --     S.view S.Plain (S.Type T.Builtin)
 
 
-sampleSyntax : Syntax
-sampleSyntax =
-    Syntax
-        (NEL.fromList
-            [ SyntaxSegment NumericLiteral "numeric-literal"
-            , SyntaxSegment CharLiteral "char-literal"
-            , SyntaxSegment TextLiteral "text-literal"
-            , SyntaxSegment Blank " "
-            , SyntaxSegment Var "x"
-            , SyntaxSegment Unit "unit"
-            , SyntaxSegment DocDelimiter "doc-delimiter"
-            , SyntaxSegment ControlKeyword "if"
-            ]
-            |> Maybe.withDefault
-                (NEL.singleton
-                    (SyntaxSegment NumericLiteral "foo")
-                )
-        )
+natTypeReference : SyntaxType
+natTypeReference =
+    TypeReference
+        (Code.Hash.unsafeFromString "##Nat")
+        (Maybe.Just (F.fromString "##Nat"))
 
 
-builtinTermSource : S.Source
-builtinTermSource =
+booleanTypeReference : SyntaxType
+booleanTypeReference =
+    TypeReference
+        (Code.Hash.unsafeFromString "Boolean")
+        (Maybe.Just (F.fromString "##Boolean"))
+
+
+natGtSignatureSyntax : Syntax
+natGtSignatureSyntax =
+    [ SyntaxSegment natTypeReference "Nat"
+    , SyntaxSegment Blank " "
+    , SyntaxSegment TypeOperator "->"
+    , SyntaxSegment Blank " "
+    , SyntaxSegment natTypeReference "Nat"
+    , SyntaxSegment Blank " "
+    , SyntaxSegment TypeOperator "->"
+    , SyntaxSegment Blank " "
+    , SyntaxSegment booleanTypeReference "Boolean"
+    ]
+        |> NEL.fromList
+        |> Maybe.withDefault
+            (NEL.singleton
+                (SyntaxSegment NumericLiteral "foo")
+            )
+        |> Syntax
+
+
+natGtTermDefinitionSyntax : Syntax
+natGtTermDefinitionSyntax =
+    [ SyntaxSegment natTypeReference "Nat"
+    , SyntaxSegment Blank " "
+    , SyntaxSegment TypeOperator "->"
+    , SyntaxSegment Blank " "
+    , SyntaxSegment natTypeReference "Nat"
+    , SyntaxSegment Blank " "
+    , SyntaxSegment TypeOperator "->"
+    , SyntaxSegment Blank " "
+    , SyntaxSegment booleanTypeReference "Boolean"
+    ]
+        |> NEL.fromList
+        |> Maybe.withDefault
+            (NEL.singleton
+                (SyntaxSegment NumericLiteral "foo")
+            )
+        |> Syntax
+
+
+builtinTerm : S.Source
+builtinTerm =
     S.Term
-        (F.fromString "base.List.map")
-        (Term.Builtin (Term.TermSignature sampleSyntax))
+        (F.fromString "Nat.gt")
+        (Term.Builtin (Term.TermSignature natGtSignatureSyntax))
 
 
 incrementSignatureSyntax : Syntax
@@ -147,6 +181,16 @@ viewConfig =
         }
 
 
+sources : List S.Source
+sources =
+    [ incrementTerm
+
+    -- , builtinTerm
+    ]
+
+
 view : Html Msg
 view =
-    S.view viewConfig incrementTerm
+    sources
+        |> List.map (S.view viewConfig)
+        |> col []
