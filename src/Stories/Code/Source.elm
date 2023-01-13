@@ -6,8 +6,10 @@ import Code.Definition.Type as T
 import Code.FullyQualifiedName as F
 import Code.Hash
 import Code.Syntax exposing (..)
+import Code.Workspace.WorkspaceItem exposing (WorkspaceItem(..))
 import Helper exposing (col)
 import Html exposing (Html)
+import Json.Decode exposing (decodeString)
 import List.Nonempty as NEL
 import Storybook.Story exposing (Story)
 import UI.Click
@@ -169,6 +171,16 @@ incrementTerm =
         )
 
 
+incrementTerm2 : Syntax -> S.Source
+incrementTerm2 syntax =
+    S.Term
+        (F.fromString "increment")
+        (Term.Source
+            (syntax |> Term.TermSignature)
+            syntax
+        )
+
+
 viewConfig : S.ViewConfig Msg
 viewConfig =
     S.Rich
@@ -189,8 +201,361 @@ sources =
     ]
 
 
+
+-- view : Html Msg
+-- view =
+--     sources
+--         |> List.map (S.view viewConfig)
+--         |> col []
+
+
+someJSON : String
+someJSON =
+    """
+    {
+        "termDefinitions": {
+            "#t7g50rohbm1c45qnvv2fiaupft4qqoduakqhj6k8fcmh1n75d4spgma4gvu1r6ip0nbn8dhv5vue4imeopnug13rnooft0abqq3uqgg": {
+                "termNames": [
+                    "increment"
+                ],
+                "bestTermName": "increment",
+                "defnTermTag": "Plain",
+                "termDefinition": {
+                    "tag": "UserObject",
+                    "contents": [
+                        {
+                            "annotation": {
+                                "contents": "increment",
+                                "tag": "HashQualifier"
+                            },
+                            "segment": "increment"
+                        },
+                        {
+                            "annotation": {
+                                "tag": "TypeAscriptionColon"
+                            },
+                            "segment": " :"
+                        },
+                        {
+                            "annotation": null,
+                            "segment": " "
+                        },
+                        {
+                            "annotation": {
+                                "contents": "##Nat",
+                                "tag": "TypeReference"
+                            },
+                            "segment": "Nat"
+                        },
+                        {
+                            "annotation": null,
+                            "segment": " "
+                        },
+                        {
+                            "annotation": {
+                                "tag": "TypeOperator"
+                            },
+                            "segment": "->"
+                        },
+                        {
+                            "annotation": null,
+                            "segment": " "
+                        },
+                        {
+                            "annotation": {
+                                "contents": "##Nat",
+                                "tag": "TypeReference"
+                            },
+                            "segment": "Nat"
+                        },
+                        {
+                            "annotation": null,
+                            "segment": "\\n"
+                        },
+                        {
+                            "annotation": {
+                                "contents": "increment",
+                                "tag": "HashQualifier"
+                            },
+                            "segment": "increment"
+                        },
+                        {
+                            "annotation": null,
+                            "segment": " "
+                        },
+                        {
+                            "annotation": {
+                                "tag": "Var"
+                            },
+                            "segment": "input"
+                        },
+                        {
+                            "annotation": {
+                                "tag": "BindingEquals"
+                            },
+                            "segment": " ="
+                        },
+                        {
+                            "annotation": null,
+                            "segment": "\\n"
+                        },
+                        {
+                            "annotation": null,
+                            "segment": "  "
+                        },
+                        {
+                            "annotation": {
+                                "tag": "UseKeyword"
+                            },
+                            "segment": "use "
+                        },
+                        {
+                            "annotation": {
+                                "tag": "UsePrefix"
+                            },
+                            "segment": "Nat"
+                        },
+                        {
+                            "annotation": null,
+                            "segment": " "
+                        },
+                        {
+                            "annotation": {
+                                "tag": "UseSuffix"
+                            },
+                            "segment": "+"
+                        },
+                        {
+                            "annotation": null,
+                            "segment": "\\n"
+                        },
+                        {
+                            "annotation": null,
+                            "segment": "  "
+                        },
+                        {
+                            "annotation": {
+                                "tag": "Var"
+                            },
+                            "segment": "input"
+                        },
+                        {
+                            "annotation": null,
+                            "segment": " "
+                        },
+                        {
+                            "annotation": {
+                                "contents": "##Nat.+",
+                                "tag": "TermReference"
+                            },
+                            "segment": "+"
+                        },
+                        {
+                            "annotation": null,
+                            "segment": " "
+                        },
+                        {
+                            "annotation": {
+                                "tag": "NumericLiteral"
+                            },
+                            "segment": "1"
+                        }
+                    ]
+                },
+                "signature": [
+                    {
+                        "annotation": {
+                            "contents": "##Nat",
+                            "tag": "TypeReference"
+                        },
+                        "segment": "Nat"
+                    },
+                    {
+                        "annotation": null,
+                        "segment": " "
+                    },
+                    {
+                        "annotation": {
+                            "tag": "TypeOperator"
+                        },
+                        "segment": "->"
+                    },
+                    {
+                        "annotation": null,
+                        "segment": " "
+                    },
+                    {
+                        "annotation": {
+                            "contents": "##Nat",
+                            "tag": "TypeReference"
+                        },
+                        "segment": "Nat"
+                    }
+                ],
+                "termDocs": []
+            }
+        },
+        "typeDefinitions": {},
+        "missingDefinitions": []
+    }
+    """
+
+
+someJson2 : String
+someJson2 =
+    """
+ [
+                        {
+                            "annotation": {
+                                "contents": "increment",
+                                "tag": "HashQualifier"
+                            },
+                            "segment": "increment"
+                        },
+                        {
+                            "annotation": {
+                                "tag": "TypeAscriptionColon"
+                            },
+                            "segment": " :"
+                        },
+                        {
+                            "annotation": null,
+                            "segment": " "
+                        },
+                        {
+                            "annotation": {
+                                "contents": "##Nat",
+                                "tag": "TypeReference"
+                            },
+                            "segment": "Nat"
+                        },
+                        {
+                            "annotation": null,
+                            "segment": " "
+                        },
+                        {
+                            "annotation": {
+                                "tag": "TypeOperator"
+                            },
+                            "segment": "->"
+                        },
+                        {
+                            "annotation": null,
+                            "segment": " "
+                        },
+                        {
+                            "annotation": {
+                                "contents": "##Nat",
+                                "tag": "TypeReference"
+                            },
+                            "segment": "Nat"
+                        },
+                        {
+                            "annotation": null,
+                            "segment": "\\n"
+                        },
+                        {
+                            "annotation": {
+                                "contents": "increment",
+                                "tag": "HashQualifier"
+                            },
+                            "segment": "increment"
+                        },
+                        {
+                            "annotation": null,
+                            "segment": " "
+                        },
+                        {
+                            "annotation": {
+                                "tag": "Var"
+                            },
+                            "segment": "input"
+                        },
+                        {
+                            "annotation": {
+                                "tag": "BindingEquals"
+                            },
+                            "segment": " ="
+                        },
+                        {
+                            "annotation": null,
+                            "segment": "\\n"
+                        },
+                        {
+                            "annotation": null,
+                            "segment": "  "
+                        },
+                        {
+                            "annotation": {
+                                "tag": "UseKeyword"
+                            },
+                            "segment": "use "
+                        },
+                        {
+                            "annotation": {
+                                "tag": "UsePrefix"
+                            },
+                            "segment": "Nat"
+                        },
+                        {
+                            "annotation": null,
+                            "segment": " "
+                        },
+                        {
+                            "annotation": {
+                                "tag": "UseSuffix"
+                            },
+                            "segment": "+"
+                        },
+                        {
+                            "annotation": null,
+                            "segment": "\\n"
+                        },
+                        {
+                            "annotation": null,
+                            "segment": "  "
+                        },
+                        {
+                            "annotation": {
+                                "tag": "Var"
+                            },
+                            "segment": "input"
+                        },
+                        {
+                            "annotation": null,
+                            "segment": " "
+                        },
+                        {
+                            "annotation": {
+                                "contents": "##Nat.+",
+                                "tag": "TermReference"
+                            },
+                            "segment": "+"
+                        },
+                        {
+                            "annotation": null,
+                            "segment": " "
+                        },
+                        {
+                            "annotation": {
+                                "tag": "NumericLiteral"
+                            },
+                            "segment": "1"
+                        }
+                    ]
+"""
+
+
 view : Html Msg
 view =
-    sources
-        |> List.map (S.view viewConfig)
-        |> col []
+    let
+        decodeResult : Result Json.Decode.Error Syntax
+        decodeResult =
+            decodeString Code.Syntax.decode someJson2
+    in
+    case decodeResult of
+        Ok source ->
+            col [] [ S.view viewConfig (incrementTerm2 source) ]
+
+        Err error ->
+            col [] [ Html.text (Json.Decode.errorToString error) ]
