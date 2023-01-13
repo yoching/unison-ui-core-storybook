@@ -171,13 +171,13 @@ incrementTerm =
         )
 
 
-incrementTerm2 : Syntax -> S.Source
-incrementTerm2 syntax =
+makeTerm : String -> Syntax -> Syntax -> S.Source
+makeTerm fqnString termSignatureSyntax sourceSyntax =
     S.Term
-        (F.fromString "increment")
+        (F.fromString fqnString)
         (Term.Source
-            (syntax |> Term.TermSignature)
-            syntax
+            (termSignatureSyntax |> Term.TermSignature)
+            sourceSyntax
         )
 
 
@@ -209,8 +209,27 @@ sources =
 --         |> col []
 
 
-someJSON : String
-someJSON =
+view : Html Msg
+view =
+    let
+        decodeResult : Result Json.Decode.Error Syntax
+        decodeResult =
+            decodeString Code.Syntax.decode incrementTermDefinitionContent
+    in
+    case decodeResult of
+        Ok source ->
+            col [] [ S.view viewConfig (makeTerm "increment" source source) ]
+
+        Err error ->
+            col [] [ Html.text (Json.Decode.errorToString error) ]
+
+
+
+-- JSON
+
+
+incrementGetDefinitionResponse : String
+incrementGetDefinitionResponse =
     """
     {
         "termDefinitions": {
@@ -401,8 +420,8 @@ someJSON =
     """
 
 
-someJson2 : String
-someJson2 =
+incrementTermDefinitionContent : String
+incrementTermDefinitionContent =
     """
  [
                         {
@@ -546,16 +565,186 @@ someJson2 =
 """
 
 
-view : Html Msg
-view =
-    let
-        decodeResult : Result Json.Decode.Error Syntax
-        decodeResult =
-            decodeString Code.Syntax.decode someJson2
-    in
-    case decodeResult of
-        Ok source ->
-            col [] [ S.view viewConfig (incrementTerm2 source) ]
+natGtGetDefinitionResponse : String
+natGtGetDefinitionResponse =
+    """
+{
+    "termDefinitions": {
+        "##Nat.>": {
+            "termNames": [
+                "base.Nat.gt",
+                "base.Nat.>",
+                "lab.lib.base.Nat.>",
+                "lab.lib.base.Nat.gt"
+            ],
+            "bestTermName": "Nat.gt",
+            "defnTermTag": "Plain",
+            "termDefinition": {
+                "tag": "BuiltinObject",
+                "contents": [
+                    {
+                        "annotation": {
+                            "contents": "##Nat",
+                            "tag": "TypeReference"
+                        },
+                        "segment": "Nat"
+                    },
+                    {
+                        "annotation": null,
+                        "segment": " "
+                    },
+                    {
+                        "annotation": {
+                            "tag": "TypeOperator"
+                        },
+                        "segment": "->"
+                    },
+                    {
+                        "annotation": null,
+                        "segment": " "
+                    },
+                    {
+                        "annotation": {
+                            "contents": "##Nat",
+                            "tag": "TypeReference"
+                        },
+                        "segment": "Nat"
+                    },
+                    {
+                        "annotation": null,
+                        "segment": " "
+                    },
+                    {
+                        "annotation": {
+                            "tag": "TypeOperator"
+                        },
+                        "segment": "->"
+                    },
+                    {
+                        "annotation": null,
+                        "segment": " "
+                    },
+                    {
+                        "annotation": {
+                            "contents": "##Boolean",
+                            "tag": "TypeReference"
+                        },
+                        "segment": "Boolean"
+                    }
+                ]
+            },
+            "signature": [
+                {
+                    "annotation": {
+                        "contents": "##Nat",
+                        "tag": "TypeReference"
+                    },
+                    "segment": "Nat"
+                },
+                {
+                    "annotation": null,
+                    "segment": " "
+                },
+                {
+                    "annotation": {
+                        "tag": "TypeOperator"
+                    },
+                    "segment": "->"
+                },
+                {
+                    "annotation": null,
+                    "segment": " "
+                },
+                {
+                    "annotation": {
+                        "contents": "##Nat",
+                        "tag": "TypeReference"
+                    },
+                    "segment": "Nat"
+                },
+                {
+                    "annotation": null,
+                    "segment": " "
+                },
+                {
+                    "annotation": {
+                        "tag": "TypeOperator"
+                    },
+                    "segment": "->"
+                },
+                {
+                    "annotation": null,
+                    "segment": " "
+                },
+                {
+                    "annotation": {
+                        "contents": "##Boolean",
+                        "tag": "TypeReference"
+                    },
+                    "segment": "Boolean"
+                }
+            ],
+            "termDocs": []
+        }
+    },
+    "typeDefinitions": {},
+    "missingDefinitions": []
+}
+"""
 
-        Err error ->
-            col [] [ Html.text (Json.Decode.errorToString error) ]
+
+natGtTermDefinitionContents : String
+natGtTermDefinitionContents =
+    """
+[
+                    {
+                        "annotation": {
+                            "contents": "##Nat",
+                            "tag": "TypeReference"
+                        },
+                        "segment": "Nat"
+                    },
+                    {
+                        "annotation": null,
+                        "segment": " "
+                    },
+                    {
+                        "annotation": {
+                            "tag": "TypeOperator"
+                        },
+                        "segment": "->"
+                    },
+                    {
+                        "annotation": null,
+                        "segment": " "
+                    },
+                    {
+                        "annotation": {
+                            "contents": "##Nat",
+                            "tag": "TypeReference"
+                        },
+                        "segment": "Nat"
+                    },
+                    {
+                        "annotation": null,
+                        "segment": " "
+                    },
+                    {
+                        "annotation": {
+                            "tag": "TypeOperator"
+                        },
+                        "segment": "->"
+                    },
+                    {
+                        "annotation": null,
+                        "segment": " "
+                    },
+                    {
+                        "annotation": {
+                            "contents": "##Boolean",
+                            "tag": "TypeReference"
+                        },
+                        "segment": "Boolean"
+                    }
+                ]
+"""
