@@ -6,14 +6,16 @@ import Code.Definition.Type as T
 import Code.FullyQualifiedName as F
 import Code.Hash
 import Code.Syntax exposing (..)
-import Code.Workspace.WorkspaceItem exposing (WorkspaceItem(..), decodeTermDetails)
+import Code.Workspace.WorkspaceItem exposing (Item, WorkspaceItem(..), decodeList, decodeTermDetails, fromItem)
 import Helper exposing (col)
-import Html exposing (Html)
+import Html exposing (Html, samp)
 import Json.Decode exposing (decodeString)
 import List.Nonempty as NEL
+import ReferenceHelper exposing (sampleReference)
 import Storybook.Story exposing (Story)
 import UI.Click
 import UI.Icon exposing (term)
+import UI.ViewMode
 
 
 main : Story () Msg
@@ -26,6 +28,7 @@ main =
 type Msg
     = HoverStart
     | HoverEnd
+    | WorkspaceMessage Code.Workspace.WorkspaceItem.Msg
 
 
 
@@ -220,24 +223,44 @@ sources =
 view : Html Msg
 view =
     let
-        decodeResult : Result Json.Decode.Error Term.TermSource
+        decodeResult : Result Json.Decode.Error (List Item)
         decodeResult =
             let
                 result =
-                    decodeString decodeTermDetails incrementTermDefinition
+                    decodeString (decodeList sampleReference) incrementGetDefinitionResponse
             in
-            Result.map (\input -> input.source) result
+            result
     in
     case decodeResult of
-        Ok source ->
-            col [] [ S.view viewConfig (makeTerm2 "increment" source) ]
-
         Err error ->
             col [] [ Html.text (Json.Decode.errorToString error) ]
 
+        Ok source ->
+            List.map
+                (\item ->
+                    item |> viewItem |> ignoreWorkspaceMsg
+                )
+                source
+                |> col []
 
 
+
+-- col [] [ S.view viewConfig (makeTerm2 "increment" source) ]
 -- JSON
+
+
+viewItem : Item -> Html Code.Workspace.WorkspaceItem.Msg
+viewItem item =
+    let
+        workspaceItem =
+            fromItem sampleReference item
+    in
+    Code.Workspace.WorkspaceItem.view Nothing UI.ViewMode.Regular workspaceItem True
+
+
+ignoreWorkspaceMsg : Html Code.Workspace.WorkspaceItem.Msg -> Html Msg
+ignoreWorkspaceMsg original =
+    Html.map WorkspaceMessage original
 
 
 incrementGetDefinitionResponse : String
