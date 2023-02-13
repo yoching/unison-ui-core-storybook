@@ -1,6 +1,7 @@
 
 import '../elm-stuff/gitdeps/github.com/unisonweb/ui-core/src/css/code.css'
 import '../elm-stuff/gitdeps/github.com/unisonweb/ui-core/src/css/ui.css'
+import '../elm-stuff/gitdeps/github.com/unisonweb/ui-core/src/css/ui/core.css'
 
 import '../static/style.css'
 import "../elm-stuff/gitdeps/github.com/unisonweb/ui-core/src/css/themes/unison-light.css";

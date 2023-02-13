@@ -2,7 +2,8 @@ module Stories.Code.WorkspaceItem exposing (..)
 
 import Code.Definition.Source as S
 import Code.Syntax exposing (..)
-import Code.Workspace.WorkspaceItem exposing (Item, WorkspaceItem(..), decodeList, fromItem)
+import Code.Workspace.WorkspaceItem exposing (Item, Msg, WorkspaceItem(..), decodeList, fromItem)
+import Dict
 import Helper exposing (col)
 import Html exposing (Html)
 import Json.Decode exposing (decodeString)
@@ -17,12 +18,6 @@ main =
     Storybook.Story.stateless
         { view = view
         }
-
-
-type Msg
-    = HoverStart
-    | HoverEnd
-    | WorkspaceMessage Code.Workspace.WorkspaceItem.Msg
 
 
 view : Html Msg
@@ -43,7 +38,7 @@ view =
         Ok source ->
             List.map
                 (\item ->
-                    item |> viewItem |> ignoreWorkspaceMsg
+                    item |> viewItem
                 )
                 source
                 |> col []
@@ -55,12 +50,7 @@ viewItem item =
         workspaceItem =
             fromItem sampleReference item
     in
-    Code.Workspace.WorkspaceItem.view Nothing UI.ViewMode.Regular workspaceItem True
-
-
-ignoreWorkspaceMsg : Html Code.Workspace.WorkspaceItem.Msg -> Html Msg
-ignoreWorkspaceMsg original =
-    Html.map WorkspaceMessage original
+    Code.Workspace.WorkspaceItem.view { activeTooltip = Nothing, summaries = Dict.empty } UI.ViewMode.Regular workspaceItem True
 
 
 incrementGetDefinitionResponse : String

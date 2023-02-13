@@ -22,6 +22,7 @@
             "elm-community/string-extra": "4.0.1",
             "krisajenkins/remotedata": "6.0.1",
             "mgold/elm-nonempty-list": "4.2.0",
+            "stoeffel/set-extra": "1.2.3",
             "wernerdegroot/listzipper": "4.0.0"
         },
         "indirect": {
