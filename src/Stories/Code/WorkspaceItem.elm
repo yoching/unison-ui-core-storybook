@@ -1,6 +1,5 @@
 module Stories.Code.WorkspaceItem exposing (..)
 
-import Code.Definition.Source as S
 import Code.Syntax exposing (..)
 import Code.Workspace.WorkspaceItem exposing (Item, Msg, WorkspaceItem(..), decodeList, fromItem)
 import Dict
@@ -9,7 +8,6 @@ import Html exposing (Html)
 import Json.Decode exposing (decodeString)
 import ReferenceHelper exposing (sampleReference)
 import Storybook.Story exposing (Story)
-import UI.Click
 import UI.ViewMode
 
 
@@ -50,7 +48,11 @@ viewItem item =
         workspaceItem =
             fromItem sampleReference item
     in
-    Code.Workspace.WorkspaceItem.view { activeTooltip = Nothing, summaries = Dict.empty } UI.ViewMode.Regular workspaceItem True
+    Code.Workspace.WorkspaceItem.view
+        { activeTooltip = Nothing, summaries = Dict.empty }
+        UI.ViewMode.Regular
+        workspaceItem
+        True
 
 
 incrementGetDefinitionResponse : String
