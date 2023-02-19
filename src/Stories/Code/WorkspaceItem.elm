@@ -1,7 +1,8 @@
 module Stories.Code.WorkspaceItem exposing (..)
 
 import Code.Syntax exposing (..)
-import Code.Workspace.WorkspaceItem exposing (Item, Msg, WorkspaceItem(..), decodeList, fromItem)
+import Code.Workspace.WorkspaceItem exposing (Item, Msg(..), WorkspaceItem(..), decodeList, fromItem)
+import Code.Workspace.Zoom exposing (Zoom(..))
 import Dict
 import Helper exposing (col)
 import Html exposing (Html)
@@ -11,14 +12,32 @@ import Storybook.Story exposing (Story)
 import UI.ViewMode
 
 
-main : Story () Msg
+type alias Model =
+    { zoom : Zoom
+    }
+
+
+main : Story Model Msg
 main =
-    Storybook.Story.stateless
-        { view = view }
+    Storybook.Story.sandbox
+        { init = { zoom = Near }
+        , update = update
+        , view = view
+        }
 
 
-view : Html Msg
-view =
+update : Msg -> Model -> Model
+update msg model =
+    case msg of
+        UpdateZoom _ zoom ->
+            { model | zoom = zoom }
+
+        _ ->
+            model
+
+
+view : Model -> Html Msg
+view model =
     let
         decodeResult : Result Json.Decode.Error (List Item)
         decodeResult =
@@ -34,22 +53,44 @@ view =
 
         Ok source ->
             List.map
-                viewItem
+                (viewItem model)
                 source
                 |> col []
 
 
-viewItem : Item -> Html Code.Workspace.WorkspaceItem.Msg
-viewItem item =
+viewItem : Model -> Item -> Html Code.Workspace.WorkspaceItem.Msg
+viewItem model item =
     let
         workspaceItem =
             fromItem sampleReference item
     in
-    Code.Workspace.WorkspaceItem.view
-        { activeTooltip = Nothing, summaries = Dict.empty }
-        UI.ViewMode.Regular
-        workspaceItem
-        True
+    case workspaceItem of
+        Success ref originalItem ->
+            let
+                updatedItem =
+                    { originalItem
+                        | zoom = model.zoom
+                    }
+            in
+            Code.Workspace.WorkspaceItem.view
+                { activeTooltip = Nothing, summaries = Dict.empty }
+                UI.ViewMode.Regular
+                (Success ref updatedItem)
+                True
+
+        Loading _ ->
+            Code.Workspace.WorkspaceItem.view
+                { activeTooltip = Nothing, summaries = Dict.empty }
+                UI.ViewMode.Regular
+                workspaceItem
+                True
+
+        Failure _ _ ->
+            Code.Workspace.WorkspaceItem.view
+                { activeTooltip = Nothing, summaries = Dict.empty }
+                UI.ViewMode.Regular
+                workspaceItem
+                True
 
 
 incrementGetDefinitionResponse : String
